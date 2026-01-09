@@ -1,14 +1,19 @@
 import HomeSearch from "@/components/Home-search";
 import { Button } from "@/components/ui/button";
-import { featuredCars, carMakes, bodyTypes, faqItems } from "@/lib/data";
+import { carMakes, bodyTypes, faqItems } from "@/lib/data";
 import { Calendar, Car, ChevronRight, Shield } from "lucide-react";
 import CarCard from "@/components/car-card";
 import Link from "next/link";
 import Image from "next/image";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { SignedOut } from "@clerk/nextjs";
+import { getFeaturedCars } from "@/actions/home";
 
-export default function Home() {
+export default async function Home() {
+
+
+  const featuredCars = await getFeaturedCars();
+
   return (
     <div className="mt-20">
       {/* Hero */}
