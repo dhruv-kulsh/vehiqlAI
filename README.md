@@ -1,36 +1,113 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Vehiql (Vehiql AI)
 
-## Getting Started
+Vehiql is a car listing and admin dashboard Next.js application with built-in AI-powered image extraction and management tools. It combines authentication (Clerk), image storage (Supabase), a Prisma/Postgres backend, and AI integrations to help add and list vehicles faster.
 
-First, run the development server:
+## Key features
+
+- Browse and filter car listings (search, make, body type, fuel type, transmission, price range, sort).
+- Pagination-enabled car listing with server-side pagination.
+- Admin panel to add new cars, upload images and manage inventory.
+- AI-powered image analysis: upload an image and extract car details (make, model, year, color, mileage, transmission, fuel type, price estimate, description, confidence). Supported via Gemini or OpenAI depending on configuration.
+- Image storage using Supabase storage buckets and public URLs for serving images.
+- Authentication powered by Clerk for admin and user flows.
+- Prisma ORM for database models and migrations.
+
+## Local development
+
+Prerequisites:
+
+- Node.js (v18+ recommended)
+- npm, yarn, or pnpm
+- A Postgres database (local or hosted) for Prisma
+- Supabase project (for image storage)
+- Clerk project for authentication
+- (Optional) OpenAI or Google Generative API credentials for AI features
+
+1. Install dependencies
+
+```bash
+npm install
+```
+
+2. Environment variables
+
+Create a `.env.local` (gitignored) at the project root and add the required variables. Example variables used in this project (fill with your values):
+
+```env
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_...
+CLERK_SECRET_KEY=sk_...
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+
+DATABASE_URL="postgresql://USER:PASS@HOST:PORT/DBNAME"
+DIRECT_URL="postgresql://..." # optional for migrations
+
+NEXT_PUBLIC_SUPABASE_URL=https://your-supabase-url.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=sb_publishable_...
+
+GEMINI_API_KEY=AIza...            # Google Generative API key (if using Gemini)
+
+
+3. Prisma setup (local dev)
+
+If you're using a local development database, run migrations and generate the client:
+
+```bash
+npx prisma generate
+npx prisma migrate dev --name init
+```
+
+4. Run the app
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 in your browser.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Notes:
+- Restart the dev server after changing `.env.local` so Next picks up new variables.
+- Do not commit `.env.local` or any secret keys.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Production / Deploy
 
-## Learn More
+This project is configured for deployment on typical Next.js hosts (Vercel, etc.).
 
-To learn more about Next.js, take a look at the following resources:
+1. Build and start
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run build
+npm run start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. Environment in production
 
-## Deploy on Vercel
+Set the same environment variables in your hosting provider's dashboard (Vercel Environment Variables, Netlify, etc.). Ensure any AI keys and database URLs are set securely.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. Deployed website link
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Replace the placeholder below with your deployed URL after you deploy the app:
+
+Deployed site: https://your-deployed-site.example.com
+
+## Troubleshooting
+
+- Pagination not showing: the pagination UI is only rendered when there are more pages than the configured page limit. Reduce `limit` in `app/(main)/cars/_components/cars-listing.jsx` to test pagination locally.
+- AI extraction errors: ensure the API key (Gemini or OpenAI) is valid, billing enabled, and the chosen model supports vision. Use the helper scripts in `scripts/` to list models or test the key.
+- Images not uploading: confirm `NEXT_PUBLIC_SUPABASE_URL` and Supabase service keys are set and that the `car-images` bucket exists and is public (or adjust code to generate signed URLs).
+
+## Useful commands
+
+- Start dev server: `npm run dev`
+- Build: `npm run build`
+- Start production: `npm run start`
+- Run Prisma migrations: `npx prisma migrate dev` (development only)
+
+## Project structure (high level)
+
+- `app/` - Next.js App Router pages and components
+- `actions/` - server-side actions (car listing, admin actions, AI processing)
+- `components/` - shared UI components (cards, pagination, UI primitives)
+- `lib/` - helpers (prisma client, supabase client, utils)
+- `prisma/` - Prisma schema and migration files
+- `public/` - static assets

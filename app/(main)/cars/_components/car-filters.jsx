@@ -13,7 +13,8 @@ import {
 import { Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "lucide-react";
-import CarFilterControls from "./filter-controls";
+// import CarFilterControls from "./filter-controls";
+import { CarFilterControls } from "./filter-controls";
 import {
     Select,
     SelectContent,
