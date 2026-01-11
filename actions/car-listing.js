@@ -341,16 +341,31 @@ export async function getCarById(carId) {
         }
 
         // Check if user has already booked a test drive for this car
-        const existingTestDrive = await db.testDriveBooking.findFirst({
-            where: {
-                carId,
-                userId: dbUser.id,
-                status: { in: ["PENDING", "CONFIRMED", "COMPLETED"] },
-            },
-            orderBy: {
-                createdAt: "desc",
-            },
-        });
+        // const existingTestDrive = await db.testDriveBooking.findFirst({
+        //     where: {
+        //         carId,
+        //         userId: dbUser.id,
+        //         status: { in: ["PENDING", "CONFIRMED", "COMPLETED"] },
+        //     },
+        //     orderBy: {
+        //         createdAt: "desc",
+        //     },
+        // });
+        let existingTestDrive = null;
+
+        if (dbUser) {
+            existingTestDrive = await db.testDriveBooking.findFirst({
+                where: {
+                    carId,
+                    userId: dbUser.id,
+                    status: { in: ["PENDING", "CONFIRMED", "COMPLETED"] },
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+            });
+        }
+
 
         let userTestDrive = null;
 
